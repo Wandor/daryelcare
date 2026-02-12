@@ -1,0 +1,16 @@
+{
+  "name": "daryelcare",
+  "version": "1.0.0",
+  "description": "ReadyKids Childminder Agency - Registration & Admin Portal",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "seed": "node -e \"require('./server/db').seed()\""
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "pg": "^8.13.1"
+  }
+}
