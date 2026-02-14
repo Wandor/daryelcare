@@ -1,5 +1,18 @@
 const { pool } = require('../db');
 
+const htmlEscapeMap = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#x27;',
+};
+
+function escapeHtml(str) {
+  if (typeof str !== 'string') return str;
+  return str.replace(/[&<>"']/g, ch => htmlEscapeMap[ch]);
+}
+
 function generateId(seqVal) {
   const year = new Date().getFullYear();
   return `RK-${year}-${String(seqVal).padStart(5, '0')}`;
@@ -151,6 +164,10 @@ async function createApplication(body) {
       petsDetails: body.premises?.petsDetails || null,
     };
 
+    const safeFirstName = escapeHtml(body.personal?.firstName);
+    const safeLastName = escapeHtml(body.personal?.lastName);
+    const safeEmail = escapeHtml(body.personal?.email);
+
     await client.query(
       `INSERT INTO applications (
         id, title, first_name, middle_names, last_name,
@@ -178,10 +195,10 @@ async function createApplication(body) {
       [
         id,
         body.personal?.title || null,
-        body.personal?.firstName,
+        safeFirstName,
         body.personal?.middleNames || null,
-        body.personal?.lastName,
-        body.personal?.email,
+        safeLastName,
+        safeEmail,
         body.personal?.phone || null,
         body.personal?.dob || null,
         body.personal?.gender || null,
@@ -364,9 +381,10 @@ async function deleteApplication(id) {
 }
 
 async function addTimelineEvent(applicationId, event, type = 'action') {
+  const safeEvent = escapeHtml(event);
   const { rows } = await pool.query(
     `INSERT INTO timeline_events (application_id, event, type) VALUES ($1, $2, $3) RETURNING *`,
-    [applicationId, event, type]
+    [applicationId, safeEvent, type]
   );
   return rows[0];
 }
@@ -378,4 +396,5 @@ module.exports = {
   updateApplication,
   deleteApplication,
   addTimelineEvent,
+  escapeHtml,
 };

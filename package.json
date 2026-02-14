@@ -6,11 +6,18 @@
   "scripts": {
     "start": "node server/index.js",
     "dev": "node --watch server/index.js",
-    "seed": "node -e \"require('./server/db').seed()\""
+    "seed": "node -e \"require('./server/db').seed()\"",
+    "test": "jest --forceExit --detectOpenHandles"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "helmet": "^8.0.0",
     "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "jest": "^30.2.0",
+    "supertest": "^7.2.2"
   }
 }
